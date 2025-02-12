@@ -48,7 +48,7 @@ Para nuevas funciones o correcciones:
 ## 📌 Wireframes y Diagrama de Flujo
 Los wireframes y el diagrama de flujo de la aplicación están en la carpeta `/docs`.  
 
-![Wireframe](./docs/wireframe.png)  
+![Wireframe](https://lucid.app/lucidchart/0d6fb280-0107-4fcd-b43b-e66cdd7e312b/edit?viewport_loc=-3063%2C-3531%2C5532%2C2561%2C0_0&invitationId=inv_53ad5cd3-987f-43a5-be1f-e38637741d52)  
 ![Diagrama de Flujo](./docs/diagrama.png)  
 
 ---
