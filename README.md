@@ -45,7 +45,7 @@ Para nuevas funciones o correcciones:
 
 ---
 
-## 📄 Wireframe y diagrama de Flujo
+## 📌 Wireframes y Diagrama de Flujo
 Puedes descargar el archivo con los wireframes y el diagrama de flujo aquí:  
 [📂 Wireframe y diagrama de flujo.docx](./Wireframe%20y%20diagrama%20de%20flujo.docx)
 
