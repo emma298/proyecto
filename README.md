@@ -35,8 +35,8 @@ Usaremos **Git Flow** para organizar el desarrollo:
 
 - **`main`**: Código estable e integrado.  
 - **`desarrollo`**: Integración de cambios antes de pasar a `main`.  
-- **`usuario1`**: Rama de trabajo del integrante 1.  
-- **`usuario2`**: Rama de trabajo del integrante 2.  
+- **`Carmen`**: Rama de trabajo del integrante 1.  
+- **`Emmanuel`**: Rama de trabajo del integrante 2.  
 
 Para nuevas funciones o correcciones:  
 
@@ -45,11 +45,9 @@ Para nuevas funciones o correcciones:
 
 ---
 
-## 📌 Wireframes y Diagrama de Flujo
-Los wireframes y el diagrama de flujo de la aplicación están en la carpeta `/docs`.  
-
-![Wireframe](./docs/wireframe.png)  
-![Diagrama de Flujo](https://lucid.app/lucidchart/0d6fb280-0107-4fcd-b43b-e66cdd7e312b/edit?viewport_loc=-3063%2C-3531%2C5532%2C2561%2C0_0&invitationId=inv_53ad5cd3-987f-43a5-be1f-e38637741d52)  
+## 📄 Wireframe y diagrama de Flujo
+Puedes descargar el archivo con los wireframes y el diagrama de flujo aquí:  
+[📂 Wireframe y diagrama de flujo.docx](./Wireframe%20y%20diagrama%20de%20flujo.docx)
 
 ---
 
