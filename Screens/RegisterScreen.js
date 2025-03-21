@@ -5,13 +5,14 @@ import axios from 'axios';
 
 const RegisterScreen = ({ navigation }) => {
   const [name, setName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
-    if (!name || !email || !password || !confirmPassword) {
+    if (!name || !lastName || !email || !password || !confirmPassword) {
       Alert.alert('Error', 'Todos los campos son obligatorios.');
       return;
     }
@@ -24,13 +25,13 @@ const RegisterScreen = ({ navigation }) => {
     try {
       const response = await axios.post('http://192.168.11.61:3000/api/users', {
         name: name,
-        lastName: '',  // Se puede quitar si la API no lo requiere
-        nickname: email, // Si la API requiere "email", cambiar esto
+        lastName: lastName,
+        nickname: email, 
         password: password,
         state: true,
-        profile: 1,
+        profile: 1, 
       }, {
-        headers: { 'Content-Type': 'application/json' }  // Asegura que el backend entienda la petición
+        headers: { 'Content-Type': 'application/json' }
       });
 
       if (response.data) {
@@ -61,6 +62,13 @@ const RegisterScreen = ({ navigation }) => {
         label="Nombre"
         value={name}
         onChangeText={setName}
+        style={styles.input}
+      />
+
+      <TextInput
+        label="Apellido"
+        value={lastName}
+        onChangeText={setLastName}
         style={styles.input}
       />
 
