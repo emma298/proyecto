@@ -1,57 +1,27 @@
-import { NavigationContainer } from '@react-navigation/native';
+import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import RegisterScreen from '../Screens/RegisterScreen'
-import LoginScreen from '../Screens/LoginScreen';
-import KanbanBScreen from '../Screens/KanbanBScreen';
+import { useRoute } from '@react-navigation/native';
+import KanbanBoardScreen from '../Screens/KanbanBoardScreen';
+import CreateTaskScreen from '../Screens/CreateTaskScreen';
 import TaskDetailScreen from '../Screens/TaskDetailScreen';
 import TaskStaticsScreen from '../Screens/TaskStaticsScreen';
 import UserSettingsScreen from '../Screens/UserSettingsScreen';
-import CreateTaskScreen from '../Screens/CreateTaskScreen';
-
 
 const Drawer = createDrawerNavigator();
 
 const DrawerNavigator = () => {
+  // Obtiene el userId pasado desde StackNavigator a través de route.params
+  const route = useRoute();
+  const { userId } = route.params || {};
+
   return (
-    <NavigationContainer>
-      <Drawer.Navigator>
-        <Drawer.Screen
-          name="Registro"
-          component={RegisterScreen}
-          options={{ title: 'Registro' }}
-        />
-        <Drawer.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ title: 'Iniciar Sesion' }}
-        />
-        <Drawer.Screen
-          name="kanbanB"
-          component={KanbanBScreen}
-          options={{ title: 'Kanba B' }}
-        />
-        <Drawer.Screen
-          name="TaskDetail"
-          component={TaskDetailScreen}
-          options={{ title: 'Detalle de Tareas' }}
-        />
-        <Drawer.Screen
-          name="Task Statics"
-          component={TaskStaticsScreen}
-          options={{ title: 'Toma Estatica' }}
-        />
-        <Drawer.Screen
-          name="UserSettings"
-          component={UserSettingsScreen}
-          options={{ title: 'Configuracion de Usuario' }}
-        />
-         <Drawer.Screen
-          name="Create Taks Scrren"
-          component={CreateTaskScreen}
-          options={{ title: 'Crear tarea' }}
-        />
-      </Drawer.Navigator>
-    </NavigationContainer>
+    <Drawer.Navigator initialRouteName="Kanban">
+      <Drawer.Screen name="Kanban" component={KanbanBoardScreen} initialParams={{ userId }} />
+      <Drawer.Screen name="Crear Tarea" component={CreateTaskScreen} initialParams={{ userId }} />
+      <Drawer.Screen name="Detalle de Tareas" component={TaskDetailScreen} initialParams={{ userId }} />
+      <Drawer.Screen name="Estadísticas" component={TaskStaticsScreen} initialParams={{ userId }} />
+      <Drawer.Screen name="Configuración" component={UserSettingsScreen} initialParams={{ userId }} />
+    </Drawer.Navigator>
   );
 };
 

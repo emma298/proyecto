@@ -27,5 +27,7 @@ const styles = StyleSheet.create({
   logo: {
     height: 128,
     width: 128,
-  }
+  },
 });
+
+// export default AssetExample;

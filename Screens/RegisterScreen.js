@@ -1,43 +1,53 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Alert } from "react-native";
-import { TextInput, Button, Text } from "react-native-paper";
-import axios from "axios";
+import React, { useState } from 'react';
+import { View, StyleSheet, Alert } from 'react-native';
+import { TextInput, Button, Text } from 'react-native-paper';
+import axios from 'axios';
 
 const RegisterScreen = ({ navigation }) => {
-  const [nombre, setNombre] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
-    if (!nombre || !email || !password || !confirmPassword) {
-      Alert.alert("Error", "Todos los campos son obligatorios.");
+    if (!name || !email || !password || !confirmPassword) {
+      Alert.alert('Error', 'Todos los campos son obligatorios.');
       return;
     }
-
     if (password !== confirmPassword) {
-      Alert.alert("Error", "Las contraseñas no coinciden.");
+      Alert.alert('Error', 'Las contraseñas no coinciden.');
       return;
     }
-
     setLoading(true);
-
+    
     try {
-      const response = await axios.post("https://tu-api.com/register", {
-        nombre,
-        email,
-        password,
+      const response = await axios.post('http://192.168.11.61:3000/api/users', {
+        name: name,
+        lastName: '',  // Se puede quitar si la API no lo requiere
+        nickname: email, // Si la API requiere "email", cambiar esto
+        password: password,
+        state: true,
+        profile: 1,
+      }, {
+        headers: { 'Content-Type': 'application/json' }  // Asegura que el backend entienda la petición
       });
 
-      if (response.data.success) {
-        Alert.alert("Éxito", "Usuario registrado correctamente");
-        navigation.replace("LoginScreen");
-      } else {
-        Alert.alert("Error", response.data.message || "No se pudo registrar el usuario.");
+      if (response.data) {
+        Alert.alert('Éxito', 'Usuario registrado correctamente');
+        navigation.replace('Login');
       }
     } catch (error) {
-      Alert.alert("Error", "No se pudo conectar con el servidor.");
+      if (error.response) {
+        console.error('Error en respuesta:', error.response.data);
+        Alert.alert('Error', error.response.data.message || 'No se pudo registrar el usuario.');
+      } else if (error.request) {
+        console.error('Error en solicitud:', error.request);
+        Alert.alert('Error', 'No se pudo conectar con el servidor.');
+      } else {
+        console.error('Error desconocido:', error.message);
+        Alert.alert('Error', 'Ocurrió un problema inesperado.');
+      }
     }
 
     setLoading(false);
@@ -45,14 +55,12 @@ const RegisterScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text variant="headlineMedium" style={styles.title}>
-        Registrarse
-      </Text>
+      <Text variant="headlineMedium" style={styles.title}>Registrarse</Text>
 
       <TextInput
         label="Nombre"
-        value={nombre}
-        onChangeText={setNombre}
+        value={name}
+        onChangeText={setName}
         style={styles.input}
       />
 
@@ -85,44 +93,19 @@ const RegisterScreen = ({ navigation }) => {
         Registrarse
       </Button>
 
-      <Text style={styles.loginText} onPress={() => navigation.navigate("LoginScreen")}>
+      <Text style={styles.loginText} onPress={() => navigation.navigate('Login')}>
         ¿Ya tienes cuenta? Inicia sesión
       </Text>
     </View>
   );
 };
 
-
-export default RegisterScreen;
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    padding: 20,
-    backgroundColor: "pink",
-  },
-  title: {
-    textAlign: "center",
-    marginBottom: 20,
-    fontWeight: "bold",
-  },
-  input: {
-    marginBottom: 15,
-  },
-  button: {
-    marginTop: 10,
-  },
-  loginText: {
-    marginTop: 15,
-    textAlign: "center",
-    color: "blue",
-  },
+  container: { flex: 1, justifyContent: 'center', padding: 20, backgroundColor: 'pink' },
+  title: { textAlign: 'center', marginBottom: 20, fontWeight: 'bold' },
+  input: { marginBottom: 15 },
+  button: { marginTop: 10 },
+  loginText: { marginTop: 15, textAlign: 'center', color: 'blue' },
 });
 
-
-
-
-
-
-
+export default RegisterScreen;

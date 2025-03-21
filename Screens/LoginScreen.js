@@ -1,96 +1,73 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Alert } from "react-native";
-import { TextInput, Button, Text } from "react-native-paper";
-import axios from "axios";
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button, Alert, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
-const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const LoginScreen = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigation = useNavigation();
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert("Error", "Por favor, ingresa tu correo y contraseña.");
+      Alert.alert('Error', 'Por favor, ingresa tu correo y contraseña.');
       return;
     }
-
     setLoading(true);
-
     try {
-      const response = await axios.post("https://tu-api.com/login", { email, password });
-
-      if (response.data.success) {
-        Alert.alert("Éxito", "Inicio de sesión exitoso.");
-        navigation.replace("KanbanBoardScreen"); 
+      const response = await axios.post('http://192.168.11.61:3000/api/users/login', {
+        nickname: email,
+        password,
+      });
+      if (response.data) {
+        await AsyncStorage.setItem('user', JSON.stringify(response.data));
+        Alert.alert('Éxito', 'Inicio de sesión exitoso.');
+        navigation.replace('Main', { userId: response.data._id });
       } else {
-        Alert.alert("Error", response.data.message || "Credenciales incorrectas.");
+        Alert.alert('Error', 'Credenciales incorrectas.');
       }
     } catch (error) {
-      Alert.alert("Error", "No se pudo conectar con el servidor.");
+      Alert.alert('Error', 'No se pudo conectar con el servidor.');
+      console.error(error);
     }
-
     setLoading(false);
   };
 
   return (
-    <View style={styles.container}>
-      <Text variant="headlineMedium" style={styles.title}>
-        Iniciar Sesión
-      </Text>
+    <View style={{ padding: 20, flex: 1, justifyContent: 'center' }}>
+      <Text style={{ fontSize: 24, marginBottom: 20, textAlign: 'center' }}>Iniciar Sesión</Text>
 
       <TextInput
-        label="Correo Electrónico"
+        placeholder="Correo"
         value={email}
         onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-        style={styles.input}
+        style={{ borderWidth: 1, borderColor: '#ccc', padding: 10, marginBottom: 10 }}
       />
 
       <TextInput
-        label="Contraseña"
+        placeholder="Contraseña"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
-        style={styles.input}
+        style={{ borderWidth: 1, borderColor: '#ccc', padding: 10, marginBottom: 20 }}
       />
 
-      <Button mode="contained" onPress={handleLogin} loading={loading} style={styles.button}>
-        Iniciar Sesión
-      </Button>
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <Button title="Iniciar Sesión" onPress={handleLogin} />
+      )}
 
-      <Text style={styles.registerText} onPress={() => navigation.navigate("RegisterScreen")}>
-        ¿No tienes cuenta? Regístrate aquí
-      </Text>
+      {/* Nuevo botón para ir a la pantalla de registro */}
+      <TouchableOpacity onPress={() => navigation.navigate('Registro')}>
+        <Text style={{ textAlign: 'center', marginTop: 20, color: 'blue' }}>
+          ¿No tienes cuenta? Regístrate aquí
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
 export default LoginScreen;
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    padding: 20,
-    backgroundColor: "yellow",
-  },
-  title: {
-    textAlign: "center",
-    marginBottom: 20,
-    fontWeight: "bold",
-  },
-  input: {
-    marginBottom: 15,
-  },
-  button: {
-    marginTop: 10,
-  },
-  registerText: {
-    marginTop: 15,
-    textAlign: "center",
-    color: "blue",
-  },
-});
-

@@ -17,34 +17,20 @@ const UserSettingsScreen = ({ navigation }) => {
         </Card.Content>
       </Card>
 
-      <Button
-        mode="contained"
-        style={styles.button}
-        onPress={() => navigation.navigate('EditUserProfile')}
-      >
+      <Button mode="contained" style={styles.button} onPress={() => navigation.navigate('EditUserProfile')}>
         Editar Perfil
       </Button>
 
-      <Button
-        mode="contained"
-        style={styles.button}
-        onPress={() => navigation.navigate('ChangePassword')}
-      >
+      <Button mode="contained" style={styles.button} onPress={() => navigation.navigate('ChangePassword')}>
         Cambiar Contraseña
       </Button>
 
-      <Button
-        mode="contained"
-        style={[styles.button, styles.logoutButton]}
-        onPress={() => navigation.navigate('Login')}
-      >
+      <Button mode="contained" style={[styles.button, styles.logoutButton]} onPress={() => navigation.replace('Login')}>
         Cerrar Sesión
       </Button>
     </View>
   );
 };
-
-export default UserSettingsScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -52,18 +38,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#f5f5f5', 
+    backgroundColor: '#f5f5f5',
   },
   title: {
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#333', 
+    color: '#333',
   },
   card: {
     marginBottom: 20,
     padding: 10,
     width: '100%',
-    backgroundColor: '#e0e0e0', 
+    backgroundColor: '#e0e0e0',
     borderRadius: 10,
   },
   cardText: {
@@ -75,9 +61,11 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     width: '100%',
     padding: 10,
-    backgroundColor: '#3f51b5', 
+    backgroundColor: '#3f51b5',
   },
   logoutButton: {
-    backgroundColor: '#d32f2f', 
+    backgroundColor: '#d32f2f',
   },
 });
+
+export default UserSettingsScreen;

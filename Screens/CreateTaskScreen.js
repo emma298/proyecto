@@ -1,33 +1,50 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Alert } from "react-native";
-import { Text, TextInput, Button } from "react-native-paper";
-import DropDownPicker from "react-native-dropdown-picker";
-import axios from "axios";
+import React, { useState } from 'react';
+import { View, StyleSheet, Alert } from 'react-native';
+import { Text, TextInput, Button } from 'react-native-paper';
+import DropDownPicker from 'react-native-dropdown-picker';
+import axios from 'axios';
 
-const CreateTaskScreen = ({ navigation }) => {
-  const [title, setTitle] = useState("");
-  const [status, setStatus] = useState("Pendiente");
+const CreateTaskScreen = ({ route, navigation }) => {
+  if (!route.params || !route.params.userId) {
+    return (
+      <View style={styles.container}>
+        <Text variant="headlineMedium" style={styles.title}>
+          Error: No se recibió el userId.
+        </Text>
+        <Button mode="contained" onPress={() => navigation.goBack()}>
+          Volver
+        </Button>
+      </View>
+    );
+  }
+  const { userId } = route.params;
+  const [title, setTitle] = useState('');
+  const [status, setStatus] = useState('Pendiente');
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [statusOptions, setStatusOptions] = useState([
-    { label: "Pendiente", value: "Pendiente" },
-    { label: "En Progreso", value: "En Progreso" },
-    { label: "Completado", value: "Completado" },
+    { label: 'Pendiente', value: 'Pendiente' },
+    { label: 'En Progreso', value: 'En Progreso' },
+    { label: 'Completado', value: 'Completado' },
   ]);
 
   const handleCreateTask = async () => {
     if (!title.trim()) {
-      Alert.alert("Error", "El título no puede estar vacío.");
+      Alert.alert('Error', 'El título no puede estar vacío.');
       return;
     }
-
     setLoading(true);
     try {
-      await axios.post("https://tu-api.com/tareas", { titulo: title, estado: status });
-      Alert.alert("Éxito", "Tarea registrada correctamente.");
-      navigation.goBack(); 
+      await axios.post('http://192.168.11.61:3000/api/tasks', {
+        title,
+        status,
+        userId,
+      });
+      Alert.alert('Éxito', 'Tarea registrada correctamente.');
+      navigation.goBack();
     } catch (error) {
-      Alert.alert("Error", "No se pudo registrar la tarea.");
+      Alert.alert('Error', 'No se pudo registrar la tarea.');
+      console.error(error);
     }
     setLoading(false);
   };
@@ -45,7 +62,6 @@ const CreateTaskScreen = ({ navigation }) => {
         style={styles.input}
       />
 
-      {/* Dropdown para seleccionar estado */}
       <DropDownPicker
         open={open}
         value={status}
@@ -57,46 +73,35 @@ const CreateTaskScreen = ({ navigation }) => {
         style={styles.dropdown}
       />
 
-      <Button
-        mode="contained"
-        onPress={handleCreateTask}
-        loading={loading}
-        style={styles.button}
-      >
+      <Button mode="contained" onPress={handleCreateTask} loading={loading} style={styles.button}>
         Registrar Tarea
       </Button>
 
-      <Button
-        mode="outlined"
-        onPress={() => navigation.goBack()}
-        style={styles.cancelButton}
-      >
+      <Button mode="outlined" onPress={() => navigation.goBack()} style={styles.cancelButton}>
         Cancelar
       </Button>
     </View>
   );
 };
 
-export default CreateTaskScreen;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
     padding: 20,
-    backgroundColor: "#FFF3E0",
+    backgroundColor: '#FFF3E0',
   },
   title: {
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   input: {
     marginBottom: 15,
   },
   dropdown: {
     marginBottom: 15,
-    borderColor: "#6200ea",
+    borderColor: '#6200ea',
     borderWidth: 1,
     borderRadius: 5,
   },
@@ -105,7 +110,9 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     marginTop: 10,
-    borderColor: "#D32F2F",
+    borderColor: '#D32F2F',
     borderWidth: 1,
   },
 });
+
+export default CreateTaskScreen;
