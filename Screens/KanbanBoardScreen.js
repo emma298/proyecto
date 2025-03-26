@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { Text, Button, Card } from 'react-native-paper';
-import axios from 'axios';
-import { useFocusEffect } from '@react-navigation/native';
+import api from '../api/api';
 
 const KanbanBoardScreen = ({ route, navigation }) => {
   if (!route.params || !route.params.userId) {
@@ -13,31 +12,28 @@ const KanbanBoardScreen = ({ route, navigation }) => {
       </View>
     );
   }
+
   const { userId } = route.params;
   const [tasks, setTasks] = useState([]);
 
-  // Función para obtener tareas
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
   const fetchTasks = async () => {
     try {
-      const response = await axios.get(`http://192.168.11.61:3000/api/tasks/user/${userId}`);
+      const response = await api.get(`/tasks/user/${userId}`);
       setTasks(response.data);
     } catch (error) {
       console.error('Error al obtener las tareas:', error);
     }
   };
 
-  // Recargar tareas cuando la pantalla se enfoque
-  useFocusEffect(
-    useCallback(() => {
-      fetchTasks();
-    }, [])
-  );
-
   const renderTasks = (status) => {
     return tasks
       .filter((task) => task.status === status)
       .map((task) => (
-        <Card key={task._id} style={styles.taskCard} onPress={() => navigation.navigate('Detalle de Tareas', { task, userId })}>
+        <Card key={task._id} style={styles.taskCard} onPress={() => navigation.navigate('Detalle de Tareas', { task })}>
           <Card.Content>
             <Text style={styles.taskTitle}>{task.title}</Text>
           </Card.Content>
@@ -48,27 +44,21 @@ const KanbanBoardScreen = ({ route, navigation }) => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text variant="headlineMedium" style={styles.title}>Tablero Kanban</Text>
-
       <View style={styles.kanbanContainer}>
         <View style={styles.column}>
           <Text style={styles.columnTitle}>Pendiente</Text>
           {renderTasks('Pendiente')}
         </View>
-
         <View style={styles.column}>
           <Text style={styles.columnTitle}>En Progreso</Text>
           {renderTasks('En Progreso')}
         </View>
-
         <View style={styles.column}>
           <Text style={styles.columnTitle}>Completado</Text>
           {renderTasks('Completado')}
         </View>
       </View>
-
-      <Button mode="contained" onPress={() => navigation.navigate('Crear Tarea', { userId })}>
-        Crear Nueva Tarea
-      </Button>
+      <Button mode="contained" onPress={() => navigation.navigate('Crear Tarea', { userId })}>Crear Nueva Tarea</Button>
     </ScrollView>
   );
 };

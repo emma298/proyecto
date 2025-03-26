@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Alert, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
+import api from '../api/api';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -17,10 +17,8 @@ const LoginScreen = () => {
     }
     setLoading(true);
     try {
-      const response = await axios.post('http://192.168.11.61:3000/api/users/login', {
-        nickname: email,
-        password,
-      });
+      const response = await api.post('/users/login', { nickname: email, password });
+
       if (response.data) {
         await AsyncStorage.setItem('user', JSON.stringify(response.data));
         Alert.alert('Éxito', 'Inicio de sesión exitoso.');

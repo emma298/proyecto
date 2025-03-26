@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import { Text, TextInput, Button } from 'react-native-paper';
-import axios from 'axios';
+import api from '../api/api';
 
 const TaskDetailScreen = ({ route, navigation }) => {
-  const { task, userId } = route.params || {};
+  const { task } = route.params || {};
   const [title, setTitle] = useState(task?.title || '');
   const [status, setStatus] = useState(task?.status || 'Pendiente');
   const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ const TaskDetailScreen = ({ route, navigation }) => {
     }
     setLoading(true);
     try {
-      await axios.put(`http://192.168.11.61:3000/api/tasks/${task._id}`, { title, status });
+      await api.put(`/tasks/${task._id}`, { title, status });
       Alert.alert('Éxito', 'Tarea actualizada correctamente.');
       navigation.goBack();
     } catch (error) {
@@ -40,7 +40,7 @@ const TaskDetailScreen = ({ route, navigation }) => {
         onPress: async () => {
           setLoading(true);
           try {
-            await axios.delete(`http://192.168.11.61:3000/api/tasks/${task._id}`);
+            await api.delete(`/tasks/${task._id}`);
             Alert.alert('Eliminado', 'Tarea eliminada con éxito.');
             navigation.goBack();
           } catch (error) {
@@ -56,58 +56,29 @@ const TaskDetailScreen = ({ route, navigation }) => {
   if (!task) {
     return (
       <View style={styles.container}>
-        <Text variant="headlineMedium" style={styles.title}>
-          No se encontró la tarea
-        </Text>
-        <Button mode="contained" onPress={() => navigation.goBack()}>
-          Volver
-        </Button>
+        <Text variant="headlineMedium" style={styles.title}>No se encontró la tarea</Text>
+        <Button mode="contained" onPress={() => navigation.goBack()}>Volver</Button>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <Text variant="headlineMedium" style={styles.title}>
-        Detalle de la Tarea
-      </Text>
-
+      <Text variant="headlineMedium" style={styles.title}>Detalle de la Tarea</Text>
       <TextInput label="Título" value={title} onChangeText={setTitle} style={styles.input} />
-
       <TextInput label="Estado" value={status} onChangeText={setStatus} style={styles.input} />
-
-      <Button mode="contained" onPress={handleUpdate} loading={loading} style={styles.button}>
-        Guardar Cambios
-      </Button>
-
-      <Button mode="contained" onPress={handleDelete} loading={loading} style={[styles.button, styles.deleteButton]}>
-        Eliminar Tarea
-      </Button>
+      <Button mode="contained" onPress={handleUpdate} loading={loading} style={styles.button}>Guardar Cambios</Button>
+      <Button mode="contained" onPress={handleDelete} loading={loading} style={[styles.button, styles.deleteButton]}>Eliminar Tarea</Button>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: '#FFF3E0',
-  },
-  title: {
-    textAlign: 'center',
-    marginBottom: 20,
-    fontWeight: 'bold',
-  },
-  input: {
-    marginBottom: 15,
-  },
-  button: {
-    marginTop: 10,
-  },
-  deleteButton: {
-    backgroundColor: '#D32F2F',
-  },
+  container: { flex: 1, justifyContent: 'center', padding: 20, backgroundColor: '#FFF3E0' },
+  title: { textAlign: 'center', marginBottom: 20, fontWeight: 'bold' },
+  input: { marginBottom: 15 },
+  button: { marginTop: 10 },
+  deleteButton: { backgroundColor: '#D32F2F' },
 });
 
 export default TaskDetailScreen;

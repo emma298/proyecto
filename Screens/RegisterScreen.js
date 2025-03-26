@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
-import axios from 'axios';
+import api from '../api/api';
 
 const RegisterScreen = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -23,15 +23,8 @@ const RegisterScreen = ({ navigation }) => {
     setLoading(true);
     
     try {
-      const response = await axios.post('http://192.168.11.61:3000/api/users', {
-        name: name,
-        lastName: lastName,
-        nickname: email, 
-        password: password,
-        state: true,
-        profile: 1, 
-      }, {
-        headers: { 'Content-Type': 'application/json' }
+      const response = await api.post('/users', {
+        name, lastName, nickname: email, password, state: true, profile: 1
       });
 
       if (response.data) {
