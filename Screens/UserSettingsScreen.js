@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
-import { Text, TextInput, Button } from 'react-native-paper';
+import { View, StyleSheet, Alert, Dimensions, ScrollView } from 'react-native';
+import { Text, TextInput, Button, IconButton } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../api/api';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+const { width } = Dimensions.get('window');
 
 const UserSettingsScreen = ({ navigation }) => {
   const [userId, setUserId] = useState(null);
@@ -12,6 +15,7 @@ const UserSettingsScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     fetchUserData();
@@ -41,7 +45,7 @@ const UserSettingsScreen = ({ navigation }) => {
     try {
       const response = await api.put(`/users/${userId}`, { name, lastName, nickname });
       if (response.data) {
-        Alert.alert('Éxito', 'Perfil actualizado correctamente.');
+        Alert.alert('Éxito', 'Datos guardados correctamente.');
         await AsyncStorage.setItem('user', JSON.stringify(response.data));
       }
     } catch (error) {
@@ -79,41 +83,158 @@ const UserSettingsScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text variant="headlineMedium" style={styles.title}>Configuración de Usuario</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.header}>
+        <Icon name="account-circle" size={50} color="#fff" style={styles.icon} />
+        <Text variant="headlineSmall" style={styles.title}>Configuración de Usuario</Text>
+      </View>
 
-      <TextInput label="Nombre" value={name} onChangeText={setName} style={styles.input} />
-      <TextInput label="Apellido" value={lastName} onChangeText={setLastName} style={styles.input} />
-      <TextInput label="Correo Electrónico" value={nickname} onChangeText={setNickname} style={styles.input} disabled />
+      <View style={styles.form}>
+        <TextInput
+          label="Nombre"
+          value={name}
+          onChangeText={setName}
+          style={styles.input}
+          mode="outlined"
+          left={<TextInput.Icon name="account" />}
+        />
+        <TextInput
+          label="Apellido"
+          value={lastName}
+          onChangeText={setLastName}
+          style={styles.input}
+          mode="outlined"
+          left={<TextInput.Icon name="account" />}
+        />
+        <TextInput
+          label="Correo Electrónico"
+          value={nickname}
+          onChangeText={setNickname}
+          style={styles.input}
+          mode="outlined"
+          left={<TextInput.Icon name="email" />}
+        />
 
-      <Button mode="contained" onPress={handleUpdateProfile} loading={loading} style={styles.button}>
-        Guardar Cambios
-      </Button>
+        <Text variant="headlineSmall" style={styles.subtitle}>Cambiar Contraseña</Text>
 
-      <Text variant="headlineMedium" style={styles.subtitle}>Cambiar Contraseña</Text>
+        <TextInput
+          label="Nueva Contraseña"
+          value={newPassword}
+          onChangeText={setNewPassword}
+          secureTextEntry={!showPassword}
+          style={styles.input}
+          mode="outlined"
+          left={<TextInput.Icon name="lock" />}
+          right={
+            <TextInput.Icon
+              name={showPassword ? 'eye-off' : 'eye'}
+              onPress={() => setShowPassword(!showPassword)}
+            />
+          }
+        />
+        <TextInput
+          label="Confirmar Nueva Contraseña"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          secureTextEntry={!showPassword}
+          style={styles.input}
+          mode="outlined"
+          left={<TextInput.Icon name="lock" />}
+          right={
+            <TextInput.Icon
+              name={showPassword ? 'eye-off' : 'eye'}
+              onPress={() => setShowPassword(!showPassword)}
+            />
+          }
+        />
 
-      <TextInput label="Nueva Contraseña" value={newPassword} onChangeText={setNewPassword} secureTextEntry style={styles.input} />
-      <TextInput label="Confirmar Nueva Contraseña" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry style={styles.input} />
+        <Button
+          mode="contained"
+          onPress={handleChangePassword}
+          loading={loading}
+          style={[styles.button, styles.passwordButton]}
+          icon="key"
+        >
+          Actualizar Contraseña
+        </Button>
 
-      <Button mode="contained" onPress={handleChangePassword} loading={loading} style={[styles.button, styles.passwordButton]}>
-        Actualizar Contraseña
-      </Button>
+         <Button
+          mode="contained"
+          onPress={handleUpdateProfile}
+          loading={loading}
+          style={styles.button}
+          icon="account-edit"
+        >
+          Guardar Cambios
+        </Button>
 
-      <Button mode="contained" onPress={handleLogout} style={[styles.button, styles.logoutButton]}>
-        Cerrar Sesión
-      </Button>
-    </View>
+        <Button
+          mode="contained"
+          onPress={handleLogout}
+          style={[styles.button, styles.logoutButton]}
+          icon="logout"
+        >
+          Cerrar Sesión
+        </Button>
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20, backgroundColor: '#f5f5f5' },
-  title: { fontWeight: 'bold', marginBottom: 20, color: '#333' },
-  subtitle: { fontWeight: 'bold', marginTop: 20, marginBottom: 10 },
-  input: { marginBottom: 15, width: '100%' },
-  button: { marginTop: 10, width: '100%', backgroundColor: '#3f51b5' },
-  passwordButton: { backgroundColor: '#FF9800' },
-  logoutButton: { backgroundColor: '#d32f2f' },
+  container: {
+    flex: 1,
+    backgroundColor: '#F4F6F9',
+    padding: 15,
+  },
+  header: {
+    backgroundColor: '#2196F3',
+    alignItems: 'center',
+    paddingVertical: 20,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    marginBottom: 15,
+  },
+  icon: {
+    marginBottom: 5,
+  },
+  title: {
+    fontWeight: 'bold',
+    color: '#fff',
+    fontSize: 20,
+  },
+  form: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  input: {
+    width: '60%',
+    height: 40,
+    marginBottom: 10,
+    backgroundColor: '#fff',
+    fontSize: 14,
+    borderRadius: 5,
+  },
+  button: {
+    width: '60%',
+    backgroundColor: '#2196F3',
+    borderRadius: 5,
+    marginTop: 15,
+    paddingVertical: 8,
+  },
+  passwordButton: {
+    backgroundColor: '#FF9800',
+  },
+  logoutButton: {
+    backgroundColor: '#d32f2f',
+  },
+  subtitle: {
+    fontWeight: 'bold',
+    marginTop: 20,
+    marginBottom: 5,
+    fontSize: 16,
+    color: '#333',
+  },
 });
 
 export default UserSettingsScreen;
