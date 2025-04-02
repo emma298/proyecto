@@ -37,12 +37,29 @@ const CreateTaskScreen = ({ route, navigation }) => {
     try {
       await api.post('/tasks', { title, status, userId });
       Alert.alert('Éxito', 'Tarea registrada correctamente.');
+      avigation.navigate('Kanban', { userId, refresh: true });
       navigation.goBack();
     } catch (error) {
       Alert.alert('Error', 'No se pudo registrar la tarea.');
       console.error(error);
     }
     setLoading(false);
+     // Fuerza recarga manual
+     navigation.reset({
+      index: 0,
+      routes: [
+        { 
+          name: 'Main', 
+          params: { 
+            screen: 'Kanban',
+            params: { 
+              userId: userId,
+              refresh: Date.now() // Timestamp único
+            }
+          }
+        }
+      ]
+    })
   };
 
   return (

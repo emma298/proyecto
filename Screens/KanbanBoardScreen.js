@@ -27,7 +27,7 @@ const KanbanBoardScreen = ({ route, navigation }) => {
       duration: 800,
       useNativeDriver: true,
     }).start();
-  }, []);
+  }, [route.params?.refresh]); // Escucha cambios en `refresh`
 
   const fetchTasks = async () => {
     try {
@@ -47,7 +47,7 @@ const KanbanBoardScreen = ({ route, navigation }) => {
           style={[styles.taskCard, { backgroundColor: color, opacity: fadeAnim }]}
         >
           <TouchableOpacity
-            onPress={() => navigation.navigate('TaskDetailScreen', { task })} // Navega a la pantalla de detalles
+            onPress={() => navigation.navigate('Detalle de Tareas', { task, userId })} 
           >
             <Card.Content>
               <Text style={styles.taskTitle}>{task.title}</Text>
@@ -56,7 +56,6 @@ const KanbanBoardScreen = ({ route, navigation }) => {
         </Animated.View>
       ));
   };
-  
 
   return (
     <View style={styles.container}>
@@ -98,6 +97,7 @@ const KanbanBoardScreen = ({ route, navigation }) => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: { 

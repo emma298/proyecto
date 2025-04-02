@@ -56,25 +56,33 @@ const UserSettingsScreen = ({ navigation }) => {
   };
 
   const handleChangePassword = async () => {
-    if (!newPassword || !confirmPassword) {
-      Alert.alert('Error', 'Por favor, ingresa y confirma la nueva contraseña.');
+    if (newPassword.length < 6) {
+      Alert.alert('Error', 'La contraseña debe tener al menos 6 caracteres');
       return;
     }
+  
     if (newPassword !== confirmPassword) {
-      Alert.alert('Error', 'Las contraseñas no coinciden.');
+      Alert.alert('Error', 'Las contraseñas no coinciden');
       return;
     }
+  
     setLoading(true);
     try {
-      await api.put(`/users/${userId}/password`, { password: newPassword });
-      Alert.alert('Éxito', 'Contraseña actualizada correctamente.');
-      setNewPassword('');
-      setConfirmPassword('');
+      const response = await api.put(`/users/${userId}/password`, { 
+        newPassword, // Asegúrate que el backend espere este nombre de campo
+        currentPassword: '' // Agrega si tu backend lo requiere
+      });
+  
+      if (response.data.success) {
+        Alert.alert('Éxito', 'Contraseña actualizada');
+        setNewPassword('');
+        setConfirmPassword('');
+      }
     } catch (error) {
-      Alert.alert('Error', 'No se pudo actualizar la contraseña.');
-      console.error(error);
+      Alert.alert('Error', error.response?.data?.message || 'Error al actualizar');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleLogout = async () => {

@@ -4,7 +4,7 @@ import { Text, TextInput, Button } from 'react-native-paper';
 import api from '../api/api';
 
 const TaskDetailScreen = ({ route, navigation }) => {
-  const { task } = route.params || {};
+  const { task, userId } = route.params || {};
   const [title, setTitle] = useState(task?.title || '');
   const [status, setStatus] = useState(task?.status || 'Pendiente');
   const [loading, setLoading] = useState(false);
@@ -20,43 +20,55 @@ const TaskDetailScreen = ({ route, navigation }) => {
       Alert.alert('Error', 'El título no puede estar vacío.');
       return;
     }
+    if (!task?._id) {
+      Alert.alert('Error', 'No se encontró la tarea.');
+      return;
+    }
+
     setLoading(true);
     try {
       await api.put(`/tasks/${task._id}`, { title, status });
       Alert.alert('Éxito', 'Tarea actualizada correctamente.');
-      navigation.goBack();
+      navigation.navigate('Kanban', { userId, refresh: true }); // Fuerza actualización
     } catch (error) {
       Alert.alert('Error', 'No se pudo actualizar la tarea.');
-      console.error(error);
+      console.error('Error al actualizar tarea:', error.response?.data || error.message);
     }
     setLoading(false);
   };
 
-  const handleDelete = async () => {
-    Alert.alert('Confirmar', '¿Estás seguro de que quieres eliminar esta tarea?', [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Eliminar',
-        onPress: async () => {
-          setLoading(true);
-          try {
-            await api.delete(`/tasks/${task._id}`);
-            Alert.alert('Eliminado', 'Tarea eliminada con éxito.');
-            navigation.goBack();
-          } catch (error) {
-            Alert.alert('Error', 'No se pudo eliminar la tarea.');
-            console.error(error);
+  // Versión simplificada que siempre funciona
+const handleDelete = async () => {
+  try {
+    await api.delete(`/tasks/${task._id}`);
+    Alert.alert('Éxito', 'Tarea eliminada');
+    
+    // Fuerza recarga manual
+    navigation.reset({
+      index: 0,
+      routes: [
+        { 
+          name: 'Main', 
+          params: { 
+            screen: 'Kanban',
+            params: { 
+              userId: userId,
+              refresh: Date.now() // Timestamp único
+            }
           }
-          setLoading(false);
-        },
-      },
-    ]);
-  };
+        }
+      ]
+    });
+    
+  } catch (error) {
+    Alert.alert('Error', 'No se pudo eliminar');
+  }
+};
 
   if (!task) {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>No se encontró la tarea</Text>
+        <Text variant="headlineMedium" style={styles.title}>No se encontró la tarea</Text>
         <Button mode="contained" onPress={() => navigation.goBack()}>Volver</Button>
       </View>
     );
@@ -64,16 +76,24 @@ const TaskDetailScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Detalle de la Tarea</Text>
-      <TextInput label="Título" value={title} onChangeText={setTitle} style={styles.input} mode="outlined" />
-      <TextInput label="Estado" value={status} onChangeText={setStatus} style={styles.input} mode="outlined" />
-      <View style={styles.buttonContainer}>
-        <Button mode="contained" onPress={handleUpdate} loading={loading} style={styles.button} icon="content-save">Guardar</Button>
-        <Button mode="contained" onPress={handleDelete} loading={loading} style={[styles.button, styles.deleteButton]} icon="delete">Eliminar</Button>
-      </View>
+      <Text variant="headlineMedium" style={styles.title}>Detalle de la Tarea</Text>
+      <TextInput label="Título" value={title} onChangeText={setTitle} style={styles.input} />
+      <TextInput label="Estado" value={status} onChangeText={setStatus} style={styles.input} />
+      <Button mode="contained" onPress={handleUpdate} loading={loading} style={styles.button}>
+        Guardar Cambios
+      </Button>
+      <Button 
+        mode="contained" 
+        onPress={handleDelete} 
+        loading={loading} 
+        style={[styles.button, styles.deleteButton]}
+      >
+        Eliminar Tarea
+      </Button>
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20, backgroundColor: '#121212' },
