@@ -2,10 +2,10 @@
 
 ## 📌 Objetivo General y Descripción
 ### **Objetivo:**
-Facilitar la gestión de tareas colaborativas en equipos, permitiendo organizar, asignar y dar seguimiento a tareas en tiempo real.
+Facilitar la gestión de tareas , permitiendo organizar, asignar y dar seguimiento a tareas en tiempo real.
 
 ### **Descripción:**
-Esta aplicación permite a los usuarios registrar tareas dentro de proyectos, asignarlas a miembros del equipo y organizarlas en un tablero Kanban. Los usuarios pueden actualizar el estado de las tareas, editarlas o eliminarlas. Además, cuenta con autenticación, personalización de cuenta y un sistema de roles.
+Esta aplicación permite a los usuarios registrar tareas dentro de proyectos,  organizarlas en un tablero Kanban. Los usuarios pueden actualizar el estado de las tareas, editarlas o eliminarlas. Además, cuenta con autenticación, personalización de cuenta.
 
 ---
 
